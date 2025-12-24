@@ -21,10 +21,7 @@
         body { background: var(--bg); color: var(--text-main); font-family: 'Inter', sans-serif; height: 100vh; overflow: hidden; display: flex; flex-direction: column; transition: 0.3s; }
         
         #appContainer { display: flex; flex: 1; width: 100%; overflow: hidden; }
-        
-        /* Sidebar: 30% Ratio */
         aside { width: 30%; background: var(--sidebar-bg); border-left: 1px solid rgba(128,128,128,0.1); display: flex; flex-direction: column; }
-        /* Main Area: 70% Ratio */
         main { width: 70%; display: flex; flex-direction: column; overflow: hidden; position: relative; }
 
         .sidebar-header { padding: 12px 8px; border-bottom: 1px solid rgba(128,128,128,0.1); text-align: center; }
@@ -43,7 +40,6 @@
 
         .display-container { flex: 1; overflow-y: auto; padding: 10px 8%; scroll-behavior: smooth; display: flex; flex-direction: column; position: relative; }
         
-        /* Initial Bismillah Screen */
         #bismillahOverlay {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             text-align: center; width: 100%; pointer-events: none; transition: 0.5s;
@@ -150,8 +146,20 @@
         let currentTrans = 'ur.najafi';
         let currentSurahNum = null;
         let currentScale = 1.0;
+        let wakeLock = null; // Screen stay-awake lock
 
         fetchSurahs();
+
+        // Screen Wake Lock Function
+        async function requestWakeLock() {
+            try {
+                if ('wakeLock' in navigator) {
+                    wakeLock = await navigator.wakeLock.request('screen');
+                }
+            } catch (err) {
+                console.error(`${err.name}, ${err.message}`);
+            }
+        }
 
         async function fetchSurahs() {
             const res = await fetch('https://api.alquran.cloud/v1/surah');
@@ -168,9 +176,7 @@
         }
 
         async function loadSurah(num, startIndex = 0) {
-            // Hide Bismillah
             bismillahOverlay.style.display = 'none';
-            
             currentSurahNum = num;
             activeIndex = startIndex;
             document.querySelectorAll('.surah-item').forEach(i => i.classList.remove('active-surah'));
@@ -181,6 +187,7 @@
             ayatsData = data.data[0].ayahs.map((a, i) => ({ ar: a.text, ur: data.data[1].ayahs[i].text, audio: data.data[2].ayahs[i].audio }));
             renderUI();
             playCurrent();
+            requestWakeLock(); // Request awake lock when playback starts
         }
 
         async function changeTrans(slug) { 
@@ -194,9 +201,7 @@
 
         function renderUI() {
             displayArea.innerHTML = '';
-            // Prepend bismillah container back if needed but empty for ayahs
             displayArea.appendChild(bismillahOverlay);
-            
             const content = document.createElement('div');
             content.style.width = '100%';
             content.innerHTML = ayatsData.map((d, i) => `<div class="ayah-block" id="ayah-${i}"><div class="arabic-text">${d.ar}</div><div class="urdu-text">${d.ur}</div></div>`).join('');
@@ -243,8 +248,16 @@
         }
 
         function togglePlay() { 
-            if (audioEngine.paused) { audioEngine.play(); playPauseBtn.innerText = "Pause"; }
-            else { audioEngine.pause(); playPauseBtn.innerText = "Play"; }
+            if (audioEngine.paused) { 
+                audioEngine.play(); 
+                playPauseBtn.innerText = "Pause";
+                requestWakeLock();
+            }
+            else { 
+                audioEngine.pause(); 
+                playPauseBtn.innerText = "Play"; 
+                if(wakeLock) wakeLock.release();
+            }
         }
 
         function nextAyah() { if (activeIndex < ayatsData.length - 1) { activeIndex++; playCurrent(); } }
