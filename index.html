@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>صدائے قرآن | Sayyid Sakhar Hashmi</title>
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Noto+Nastaliq+Urdu&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Noto+Nastaliq+Urdu&family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root {
             --accent: #d4af37; --bg: #010405; --sidebar-bg: #080b0c;
@@ -25,9 +25,45 @@
         aside { width: 25%; background: var(--sidebar-bg); border-left: 1px solid rgba(128,128,128,0.1); display: flex; flex-direction: column; }
         main { width: 75%; display: flex; flex-direction: column; overflow: hidden; position: relative; }
 
-        .sidebar-header { padding: 10px 5px; border-bottom: 1px solid rgba(128,128,128,0.1); text-align: center; }
-        .sidebar-header h2 { font-family: 'Noto Nastaliq Urdu', serif; color: var(--accent); font-size: 1.1rem; }
-        .sidebar-header .credits { font-family: 'Noto Nastaliq Urdu', serif; font-size: 0.7rem; color: var(--text-dim); margin-top: 5px; }
+        /* Updated Sidebar Header for 3 lines */
+        .sidebar-header { padding: 12px 5px; border-bottom: 1px solid rgba(128,128,128,0.1); text-align: center; }
+        
+        .sidebar-header h2 { 
+            font-family: 'Noto Nastaliq Urdu', serif; 
+            font-size: 1.15rem; /* Adjusted for single line */
+            margin-bottom: 5px;
+            white-space: nowrap;
+            background: linear-gradient(45deg, #d4af37, #fdfc47, #d4af37, #b8860b);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shine 3s linear infinite;
+        }
+
+        .credits-container {
+            border-top: 1px double rgba(212, 175, 55, 0.2);
+            padding-top: 5px;
+            margin-top: 5px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .credit-line-top {
+            font-family: 'Noto Nastaliq Urdu', serif;
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            opacity: 0.8;
+        }
+
+        .credit-line-name {
+            font-family: 'Noto Nastaliq Urdu', serif;
+            font-size: 0.95rem;
+            color: var(--accent);
+            font-weight: normal;
+        }
+
+        @keyframes shine { to { background-position: 200% center; } }
         
         .search-container { padding: 8px; }
         #surahSearch { width: 100%; padding: 6px; background: rgba(255,255,255,0.05); border: 1px solid rgba(212,175,55,0.3); border-radius: 6px; color: #fff; font-size: 0.8rem; outline: none; text-align: right; }
@@ -51,10 +87,10 @@
         .footer-row { display: flex; align-items: center; justify-content: space-evenly; margin-bottom: 6px; width: 100%; }
         .btn { background: var(--accent); color: #000; border: none; padding: 5px 8px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 0.75rem; }
         
-        #ayahInput { width: 40px; background: rgba(255,255,255,0.1); border: 1px solid #555; color: #fff; text-align: center; border-radius: 4px; font-size: 0.75rem; }
+        #ayahInput { width: 45px; background: rgba(255,255,255,0.1); border: 1px solid #555; color: #fff; text-align: center; border-radius: 4px; font-size: 0.75rem; padding: 2px; }
 
         .layout-h #appContainer { flex-direction: column; }
-        .layout-h aside { width: 100%; height: 65px; order: 2; border-top: 1px solid rgba(128,128,128,0.2); }
+        .layout-h aside { width: 100%; height: 100px; order: 2; border-top: 1px solid rgba(128,128,128,0.2); }
         .layout-h main { width: 100%; flex: 1; order: 1; }
         .layout-h .sidebar-header, .layout-h .search-container { display: none; }
         .layout-h .surah-list { display: flex; flex-direction: row; overflow-x: auto; }
@@ -67,7 +103,10 @@
         <aside>
             <div class="sidebar-header">
                 <h2>صدائے قرآن</h2>
-                <div class="credits">پیشکش: سید ساخر ہاشمی</div>
+                <div class="credits-container">
+                    <div class="credit-line-top">پیشکش</div>
+                    <div class="credit-line-name">سید ساخر ہاشمی</div>
+                </div>
             </div>
             <div class="search-container">
                 <input type="text" id="surahSearch" placeholder="تلاش کریں..." oninput="filterSurahs()">
@@ -81,9 +120,9 @@
             </div>
             <footer>
                 <div class="footer-row">
-                    <span onclick="toggleLayout()" style="cursor:pointer; font-size:1.2rem;">🔳</span>
-                    <span onclick="toggleSlideMode()" id="slideIcon" style="cursor:pointer; font-size:1.2rem;">💠</span>
-                    <span onclick="toggleMode()" style="cursor:pointer; font-size:1.2rem;">🌓</span>
+                    <span onclick="toggleLayout()" title="Layout" style="cursor:pointer; font-size:1.2rem;">🔳</span>
+                    <span onclick="toggleSlideMode()" id="slideIcon" title="Focus Mode" style="cursor:pointer; font-size:1.2rem;">💠</span>
+                    <span onclick="toggleMode()" title="Theme" style="cursor:pointer; font-size:1.2rem;">🌓</span>
                     <div class="btn" id="speedBtn" onclick="changeSpeed()">1x</div>
                     <select id="transSelect" onchange="changeTrans(this.value)" style="background:#000; color:#fff; border:1px solid var(--accent); border-radius:4px; font-size:0.65rem;">
                         <option value="ur.najafi">NAJAFI</option>
@@ -95,11 +134,11 @@
                 </div>
                 <div class="footer-row">
                     <button class="btn" onclick="prevAyah()">❮</button>
-                    <button class="btn" onclick="togglePlay()" id="playPauseBtn" style="min-width:65px;">Pause</button>
+                    <button class="btn" onclick="togglePlay()" id="playPauseBtn" style="min-width:65px;">Play</button>
                     <button class="btn" onclick="nextAyah()">❯</button>
-                    <input type="number" id="ayahInput" placeholder="آیت">
+                    <input type="number" id="ayahInput" placeholder="آیت" onkeyup="if(event.key==='Enter') goToAyah()">
                     <button class="btn" style="min-width:35px;" onclick="goToAyah()">GO</button>
-                    <span id="status" style="font-size:0.7rem; color:var(--accent);">0/0</span>
+                    <span id="status" style="font-size:0.75rem; color:var(--accent); font-weight:bold; min-width:40px; text-align:center;">0/0</span>
                 </div>
             </footer>
         </main>
@@ -122,16 +161,19 @@
         let currentScale = 1.0;
         let wakeLock = null;
 
-        // Wake Lock Function to keep screen on
         async function requestWakeLock() {
             if ('wakeLock' in navigator) {
                 try {
+                    if (wakeLock) return;
                     wakeLock = await navigator.wakeLock.request('screen');
-                } catch (err) {
-                    console.error(`${err.name}, ${err.message}`);
-                }
+                    wakeLock.addEventListener('release', () => { wakeLock = null; });
+                } catch (err) { console.error(err); }
             }
         }
+
+        setInterval(() => {
+            if (!audioEngine.paused && !wakeLock) requestWakeLock();
+        }, 5000);
 
         function releaseWakeLock() {
             if (wakeLock !== null) {
@@ -169,11 +211,12 @@
         function checkAutoResume() {
             const savedSurah = localStorage.getItem('lastSurah');
             const savedAyah = localStorage.getItem('lastAyah');
-            if(savedSurah) loadSurah(parseInt(savedSurah), parseInt(savedAyah || 0), true);
+            if(savedSurah) loadSurah(parseInt(savedSurah), parseInt(savedAyah || 0), false);
         }
 
         function loadSurah(num, startAt = 0, autoPlay = true) {
             audioEngine.pause();
+            playPauseBtn.innerText = "Play";
             displayArea.innerHTML = '<div style="text-align:center; margin-top:35%; color:var(--accent);">لوڈنگ...</div>';
             currentSurahNum = num;
             activeIndex = startAt;
@@ -191,6 +234,7 @@
                         audio: data.data[2].ayahs[i].audio
                     }));
                     renderUI();
+                    if (ayatsData[activeIndex]) audioEngine.src = ayatsData[activeIndex].audio;
                     if(autoPlay) playCurrent(); else highlight();
                 });
         }
@@ -204,7 +248,7 @@
                 block.innerHTML = `<div class="arabic-text">${d.ar}</div><div class="urdu-text">${d.ur}</div>`;
                 displayArea.appendChild(block);
             });
-            statusEl.innerText = `${activeIndex + 1}/${ayatsData.length}`;
+            updateStatus();
         }
 
         function playCurrent() {
@@ -215,22 +259,19 @@
                 audioEngine.play().catch(()=>{});
                 playPauseBtn.innerText = "Pause";
                 localStorage.setItem('lastAyah', activeIndex);
-                requestWakeLock(); // Screen ON rakho
+                requestWakeLock();
             }
         }
 
         audioEngine.onended = () => { 
-            if (activeIndex < ayatsData.length - 1) { 
-                activeIndex++; 
-                playCurrent(); 
-            } else {
-                releaseWakeLock(); // Khatam hone par screen relax kar do
-            }
+            if (activeIndex < ayatsData.length - 1) { activeIndex++; playCurrent(); } 
+            else { releaseWakeLock(); playPauseBtn.innerText = "Play"; }
         };
 
         function highlight() {
             document.querySelectorAll('.ayah-block').forEach(b => b.classList.remove('active'));
             const el = document.getElementById(`a-${activeIndex}`);
+            updateStatus();
             if (el) {
                 el.classList.add('active');
                 if (!displayArea.classList.contains('slide-mode')) {
@@ -241,30 +282,41 @@
             }
         }
 
+        function updateStatus() { if(ayatsData.length > 0) statusEl.innerText = `${activeIndex + 1}/${ayatsData.length}`; }
+
         function togglePlay() { 
             if (audioEngine.paused) { 
-                audioEngine.play(); 
+                if (!audioEngine.src && ayatsData[activeIndex]) audioEngine.src = ayatsData[activeIndex].audio;
+                audioEngine.play().catch(()=>{}); 
                 playPauseBtn.innerText="Pause"; 
                 requestWakeLock();
-            }
-            else { 
+            } else { 
                 audioEngine.pause(); 
                 playPauseBtn.innerText="Play"; 
                 releaseWakeLock();
             }
         }
+
         function nextAyah() { if (activeIndex < ayatsData.length - 1) { activeIndex++; playCurrent(); } }
         function prevAyah() { if (activeIndex > 0) { activeIndex--; playCurrent(); } }
+        
         function goToAyah() {
             const v = parseInt(document.getElementById('ayahInput').value);
-            if (v > 0 && v <= ayatsData.length) { activeIndex = v - 1; playCurrent(); }
+            if (v > 0 && v <= ayatsData.length) { 
+                activeIndex = v - 1; 
+                playCurrent(); 
+                document.getElementById('ayahInput').value = '';
+                document.getElementById('ayahInput').blur();
+            }
         }
+
         function changeSpeed() {
             const spd = [1.0, 1.25, 1.5, 2.0, 0.75];
             playbackSpeed = spd[(spd.indexOf(playbackSpeed) + 1) % spd.length];
             audioEngine.playbackRate = playbackSpeed;
             document.getElementById('speedBtn').innerText = playbackSpeed + 'x';
         }
+
         function toggleSlideMode() {
             displayArea.classList.toggle('slide-mode');
             document.getElementById('slideIcon').innerText = displayArea.classList.contains('slide-mode') ? "📜" : "💠";
@@ -275,11 +327,8 @@
         function changeTrans(val) { currentTrans = val; if(currentSurahNum) loadSurah(currentSurahNum, activeIndex); }
         function updateScale(v) { currentScale += v; document.documentElement.style.setProperty('--app-scale', currentScale); }
         
-        // Agar user tab change kare aur wapis aaye to wake lock re-activate karein
         document.addEventListener('visibilitychange', async () => {
-            if (wakeLock !== null && document.visibilityState === 'visible') {
-                await requestWakeLock();
-            }
+            if (wakeLock !== null && document.visibilityState === 'visible') await requestWakeLock();
         });
     </script>
 </body>
